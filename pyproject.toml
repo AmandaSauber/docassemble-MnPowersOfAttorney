@@ -1,0 +1,30 @@
+license = "MIT"
+license-files = [
+    "LICENSE",
+]
+
+[build-system]
+requires = [
+    "setuptools==80.9.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docassemble.MnPowersOfAttorney"
+version = "1.1.0"
+description = "Powers of Attorney"
+readme = "README.md"
+authors = [
+    { name = "Quinten Steenhuis", email = "qsteenhuis@suffolk.edu" },
+]
+dependencies = [
+    "docassemble.GithubFeedbackForm @ git+https://github.com/SuffolkLITLab/docassemble-GithubFeedbackForm.git@main",
+]
+
+[project.urls]
+Homepage = "https://www.lawhelpmn.org/self-help-library/legal-resource/power-attorney-do-it-yourself"
+
+[tool.setuptools.packages.find]
+where = [
+    ".",
+]
