@@ -1,11 +1,6 @@
-license = "MIT"
-license-files = [
-    "LICENSE",
-]
-
 [build-system]
 requires = [
-    "setuptools==80.9.0",
+    "setuptools>=80.9.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -19,6 +14,7 @@ authors = [
 ]
 dependencies = [
     "docassemble.GithubFeedbackForm @ git+https://github.com/SuffolkLITLab/docassemble-GithubFeedbackForm.git@main",
+    "docassemble.InterviewStats>=0.6.3",
 ]
 
 [project.urls]

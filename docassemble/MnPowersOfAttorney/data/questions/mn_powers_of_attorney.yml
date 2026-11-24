@@ -1,7 +1,14 @@
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.GithubFeedbackForm:embedded_review.yml
 #  - docassemble.LawHelpMNFramework:lawhelpmn_interview_framework.yml
+---
+features:
+  bootstrap theme: LawHelpMNBranding_custom.css
+  labels above fields: True
+  navigation: True
+  progress bar: True
 ---
 metadata:
   title: |
@@ -10,13 +17,6 @@ metadata:
     Powers of Attorney
   authors:
     - Quinten Steenhuis
----
-features:
-#  bootstrap theme: docassemble.BrandingMN:data/static/LHBranding_bootstrap.min.css 
-  css: 
-    - docassemble.BrandingMN:data/static/LHBranding_bootstrap.min.css
-#    - docassemble.ALToolbox:al_three_parts_date.css
-#    - LawHelpMN2x_002_resized.png
 ---
 mandatory: True
 comment: |
@@ -56,6 +56,12 @@ code: |
 code: |
   al_form_type = "other_form" 
 ---
+default screen parts:  
+  under: |
+    % if not user_logged_in():
+    [:key: Sign in](${url_of('login', next=interview_url())}) or [sign up](${url_of('register', next=interview_url())}) to save your progress. You can use this program without signing in, but your information is NOT saved. You can't come back to it later.   
+    % endif
+---
 objects:
   - attorneys: ALPeopleList.using(there_are_any=True)
   - successor_attorneys: ALPeopleList
@@ -71,7 +77,7 @@ sections:
   - section_decision_makers: Your decision makers
   - section_powers: What your decision makers can do
   - section_limits: Limits
-  - review_mn_powers_of_attorney: Review your answers
+  #- review_mn_powers_of_attorney: Review your answers
   - mn_powers_of_attorney_download: Download
 ---
 #################### Interview order #####################
@@ -104,6 +110,7 @@ code: |
   What_can_the_power_of_attorney_decide_for_you
   if power_real_estate and real_estate_limited:
     real_estate_items.gather()
+  power_all_above
   nav.set_section("section_limits")
   poa_expires
   What_limits_will_the_power_of_attorney_have
@@ -119,7 +126,6 @@ code: |
   al_intro_screen
   mn_powers_of_attorney_intro
   interview_order_mn_powers_of_attorney
-  signature_date
   # Store anonymous data for analytics / statistics
   store_variables_snapshot(
       persistent=True,
@@ -128,10 +134,183 @@ code: |
           "reached_interview_end": True,
       },
   )
-  nav.set_section("review_mn_powers_of_attorney")
-  review_mn_powers_of_attorney
+  #nav.set_section("review_mn_powers_of_attorney")
+  #review_mn_powers_of_attorney
   nav.set_section("mn_powers_of_attorney_download")
   mn_powers_of_attorney_download
+---
+template: LawHelpMN_terms_of_use
+subject: |
+  <b>Legal Services State Support (LSSS)’s Terms of Use</b>
+content: |
+  The website, <a href="http://www.docs.lawhelpmn.org" title="http://www.docs.lawhelpmn.org">LawHelpMN Forms</a>, is free to use. Legal Services State Support (LSSS) created and maintains this site. LSSS is a nonprofit organization that hosts <a href="https://www.lawhelpmn.org/" title="https://www.lawhelpmn.org/">LawHelpMN.org</a>, a legal information and referral website for low-income Minnesotans with civil legal issues. 
+  
+  When you use this website you agree to all of the terms listed below. Please read them carefully. If you do not agree to these terms of use, do not use this site. LSSS can cancel your account at any time if you do not follow these Terms of Use. 
+
+  <b>1. No Lawyer-Client Relationship</b>
+  
+  * This site provides legal information and forms to help people solve legal problems in Minnesota. It does not give legal advice. It does not tell you if your answers are legally sufficient or tell you about all possible defenses, choices, or outcomes.  There is no lawyer review of any forms you make using this site. 
+
+  * You are not a client of LSSS or MMLA. LSSS and MMLA lawyers can still work for other people. This is true even if their case is against you.
+
+  * Do you have questions about your legal rights? Contact a <a href="https://www.lawhelpmn.org/providers-and-clinics" title="https://www.lawhelpmn.org/providers-and-clinics">lawyer</a>.
+
+  <b>2.	Release of Liability</b>
+
+    * LSSS offers the information and content on this site for informational purposes only. Laws and local rules can change. We do our best to make sure the information and forms on this website are accurate. But, we do not guarantee that the information and forms on this website are always:
+
+      * Available; 
+      * Correct;
+      * Up-to-date; 
+      * Reliable;
+      * Free of viruses or other defects; or 
+      * That any problems or inaccuracies will be corrected. 
+  
+      When you use this site, it is at your own risk.
+
+    * You do not have the right to make a claim that you were harmed because you used this website. LSSS is not responsible for any loss, injury, claim, liability, or damage related to:
+  
+      * The hardware or software you use to access this site;
+      * Your use of this site or its content, or your decision to count on any information you got from this website;
+      * Any errors or omissions in the content on this site or other sites you are directed to from this site; or
+  - The unavailability of this site or its content.
+
+  <b>3.	Who can use this site and how it can be used</b>
+
+    * You need to be 18 years old or older to use this site.
+
+    * Unless you are a lawyer, use of this site is for your own personal use.  Use of this site to represent or provide legal advice to others is strictly prohibited.   
+
+    * Do not sell, reproduce, copy, change, publish, display, or distribute any part of this website, except as allowed by the terms of this agreement. 
+
+    * You must not use this site in any way that Minnesota law, U.S. law, or the laws of your state define as illegal.
+
+    * Do <u>not</u> use this website to:
+      * upload content that:
+          * Is illegal;
+          * Would illegally invade someone else’s privacy; 
+          * The purpose is to harm, threaten, abuse, harass, or defame someone; 
+          * The purpose is to be vulgar, obscene, hateful, or racially or ethnically offensive; 
+          * Is wrongful is some other way
+          * You do not have a right to share proprietary and confidential information learned or disclosed as part of employment relationships or under nondisclosure agreements; or
+          * Infringes, misappropriates, or in any way violates a party’s patent, trademark, trade secret, copyright or other proprietary rights
+
+      * Harm a child in any way
+
+      * Misrepresent your relationship with a person or agency or impersonate a person or agency, including LSSS or its staff.
+
+      * Stalk or harass someone
+
+    * LSSS may investigate complaints and reported violations. If we suspect illegal or inappropriate activity, we may report it to law enforcement officials, regulators, or other parties. We may disclose user information of anyone, or any entity involved in that activity, including, but not limited to: user profiles, e-mail addresses, usage history, posted materials, IP addresses, and traffic information.
+
+  <b>4.	Your Privacy</b>
+
+    * The <a href="https://www.lawhelpmn.org/privacy-policy" title="https://www.lawhelpmn.org/privacy-policy">LawHelpMN privacy policy</a> applies to this site.
+
+    * You have the option to create an account for this site. If you choose to create an account, you must provide your first and last name, and a valid e-mail address. You are also required to create a password. Passwords must be at least six characters long and contain at least one lower case letter, at least one upper case letter, and at least one number.  
+  
+    * When creating and using an account on this site, you agree to:
+
+        * Not let anyone else use your account to access this site;
+        * Be responsible for anyone who accesses the site with your user information; and
+        * Protect your user information so that others can’t use it.
+
+    * <b>Protect Your Password:</b> Do not use your name, birthday, a single word, or other information that is easy to guess. Instead, use a string of letters and numbers or a phrase. 
+
+    * Do not use this website to collect or store personal data about **other users** unless the other user(s) have given you permission, or it is necessary to complete the form you are working on.
+
+    * Information that you type will be saved for 90 days for logged-in users. We delete all information 90 days after you last update it. You can also delete information immediately. We log information including IP addresses and web browsers from all visitors. We use this information to keep our site secure. We keep logs for up to 90 days.
+
+    * <b>We never sell your information.</b> We share anonymous information with a small number of nonprofit legal services providers, researchers, courts, and funders. We use the information to improve our site and to improve free legal help in Minnesota. 
+
+  <b>5.	Keeping your information secure</b>
+
+    * We use the same technology that banks and online stores use to keep your information safe. We use:
+  
+      * 256 bit encryption
+      * Continual monitoring
+      * Limited access controls
+      * Regular security updates
+      * Software firewalls
+
+  <b>6.	These terms of use can change</b>
+
+    * We may change these Terms of Use at any time with no notice. Please review the terms on a regular basis to see any changes. We always include a last updated date so that you know when these Terms of Use were last updated.
+
+    * If you use the site after we make changes, you accept our changed Terms of Use.
+
+  <b>7. The laws of Minnesota apply to these Terms of Use.</b>
+
+  <b>8.	No Technical Support</b>
+
+  If you have problems using this website, use the Feedback form found in the footer to tell us about the issue. We can’t guarantee we will be able to resolve all technical issues. We appreciate you telling us about any errors or problems. 
+---
+comment: |
+  Overrides About page from `al_visual.yml`
+template: about_this_interview_version_info
+content: |
+  % if all_variables(special='metadata').get('help_page_title','').rstrip() and all_variables(special='metadata').get('help_page_url','').rstrip():
+  To learn more about this legal topic, go to: [${ all_variables(special='metadata').get('help_page_title','').rstrip() }](${ all_variables(special='metadata').get('help_page_url','').rstrip() }).
+  % endif
+
+  % if interview_metadata.get("main_interview_key"):
+    <%
+      MAIN_METADATA = interview_metadata[interview_metadata["main_interview_key"]]
+    %>
+  % elif len(interview_metadata) > 1:    
+    <% 
+      del(interview_metadata["main_interview_key"]) # DADict creates the key on lookup above
+      MAIN_METADATA = next(iter(interview_metadata.values())) 
+    %>
+  % else:
+    <% MAIN_METADATA = all_variables(special='metadata') %>
+  % endif
+  <% ORIGINAL_FORMS = MAIN_METADATA.get("original_form", []) if isinstance(MAIN_METADATA.get("original_form"), list) else ([MAIN_METADATA.get("original_form", "")] if MAIN_METADATA.get("original_form") else []) %>
+
+  % if len(ORIGINAL_FORMS) > 1:
+  View the original version of this form at the links below:
+
+  % for url in [url for url in ORIGINAL_FORMS if url.strip() != "None" and url.startswith("http")]:
+  * [${ url }](${ url })
+  % endfor
+  % elif len(ORIGINAL_FORMS) == 1:
+  [View the original version of this form](${ ORIGINAL_FORMS[0] }).
+  % endif
+
+  To learn more about this legal topic, go to: [Powers of Attorney](https://www.lawhelpmn.org/self-help-library/fact-sheet/powers-attorney).
+  
+  [LawHelpMN](https://www.lawhelpmn.org/about-us) made this free tool. The goal of the LawHelpMN website is to provide accurate and easy-to-understand legal information. LawHelpMN is maintained by [Legal Services State Support](https://www.mnlegalservices.org/), which is non-profit that works to improve understanding and access to the civil legal justice system for all Minnesotans.
+
+  **Version Information:** "${all_variables(special='metadata').get('title','').rstrip()}" version `${ package_version_number }`. This tool also uses code from the Document Assembly Line Project, version `${ al_version }`.
+---
+id: basic questions intro screen
+question: |
+  ${interview_short_title}: ${ AL_ORGANIZATION_TITLE}
+subquestion: |
+  ${ AL_ORGANIZATION_TITLE } can help you complete and download forms in 3 steps:
+  
+  Step 1. Answer questions that will fill in your form for you.<br>
+  Step 2. Preview the completed form.<br>
+  Step 3. Download and print the final form. You will need to deliver it on your own.
+
+  
+  This site is not a lawyer. If you would like a lawyer, find [your local
+  legal aid provider](https://www.lawhelpmn.org/providers-and-clinics).
+  
+fields:
+  - note: |
+      ${ display_template(LawHelpMN_terms_of_use, scrollable=True) }
+      To continue, you must accept our terms of use
+  - I accept the terms of use: acknowledged_information_use
+    datatype: yesnowide
+    grid: 8
+continue button field: al_intro_screen
+validation code: |
+  if not acknowledged_information_use:
+    validation_error(
+      "You must accept the terms of use to continue.",
+      field="acknowledged_information_use",
+    )
 ---
 comment: |
   This question is used to introduce your interview. Please customize
@@ -140,34 +319,45 @@ continue button field: mn_powers_of_attorney_intro
 question: |
   Powers of Attorney
 subquestion: |
-  This interview will help you give powers of attorney to a trusted person. This person can make the decisions for you about your finances that you pick. In Minnesota, this person will be called your "attorney in fact."
+  This interview will help you give powers of attorney to a trusted person. The person you give power to is called the "Attorney-in-Fact". This person will act for you and as you when using the Power of Attorney. 
   
-  Before you get started, you should gather:
+  Legally, when your Attorney-in-Fact acts for you, it's the same as if you were acting for yourself.
   
-  1. The name and address of the person or people you trust and want to give power over your finances.
-  1. The _legal description_ of any property you want to give the person you trust authority over.
+  Before you get started, you should: 
+
+  1. Read about [Powers of Attorney](https://www.lawhelpmn.org/self-help-library/fact-sheet/powers-attorney) to understand how much power it gives.
+  
+  2. Read about [stopping a Power of Attorney](https://www.lawhelpmn.org/self-help-library/fact-sheet/powers-attorney) should you need to do so.
+  
+  3. Read and understand the difference between a [Durable Power of Attorney](https://www.lawhelpmn.org/self-help-library/fact-sheet/powers-attorney) and a [Health Care Directive](https://www.lawhelpmn.org/self-help-library/fact-sheet/health-care-directives).
+  
+  4. Gather the following:
+  
+      - The name and address of the person or people you trust and want to give power over your finances.
+      - The _legal description_ of any property you want to give the person you trust authority over.
   
   The interview will help you decide which powers to give to your "attorney-in-fact."
   
   When you are finished, you will need to:
   
   1. Sign the powers of attorney form in front of a notary.
-  1. Give copies of the powers of attorney form to the person you are giving power and to the bank or anywhere else you want the person to be allowed to make decisions for you.
+  
+  2. Give copies of the powers of attorney form to the person you are giving power and to the bank or anywhere else you want the person to be allowed to make decisions for you.
   
   Most people take about 20 minutes to finish this interview.
 ---
 id: can i get a power of attorney
 question: |
-  Can you give a powers of attorney?
+  Can I get a power of attorney?
 subquestion: |
   You can use this form to give power over your own decision making,
-  or a helper can fill it in for the person who is giving power over their
+  or someone else can fill it in for the person who is giving power over their
   decision making.
 
   This question is about the person who is giving the power over their decision
-  making, regardless of who is using this website.
+  making, regardless of who is filling out this form.
 
-  Is the person **giving** power to someone else:
+  Is the person wanting to **give** power to someone else:
 fields:
   - Living in Minnesota?: grantor_lives_in_minnesota
     datatype: yesnoradio
@@ -175,6 +365,10 @@ fields:
     datatype: yesnoradio
   - Able to make their own decisions about **giving** power to someone else?: grantor_competent
     datatype: yesnoradio
+    help: |
+      A Power of Attorney can only be made for a legally competent adult.
+      
+      'Legally competent' means the person wanting to give power to someone else must have the ability to reason and make sound decisions, and must fully understand their actions in signing this form.
 ---
 id: exit cannot get poa
 event: exit_cant_get_poa
@@ -188,6 +382,8 @@ subquestion: |
   1. Living in Minnesota
   1. Over 18, and
   1. Able to make the decision about giving power to someone else right now (competent)
+
+  'Legally competent' means the person wanting to give power to someone else must have the ability to reason and make sound decisions, and must fully understand their actions in signing this form.
 
   % if not grantor_lives_in_minnesota:
   You said the person giving
@@ -204,8 +400,7 @@ subquestion: |
   % endif
 
   You cannot use this website to complete a powers of attorney form.
-  You may want to read about [other legal options](https://www.lawhelpmn.org/self-help-library/planning-ahead-elder-law)
-  on the Law Help Minnesota website.
+  You may want to read about [other legal options](https://www.lawhelpmn.org/self-help-library/planning-ahead-elder-law) on the LawHelpMN website.
 buttons:
   - Leave: exit
     url: https://www.lawhelpmn.org/self-help-library/planning-ahead-elder-law
@@ -213,6 +408,8 @@ buttons:
 id: who answering
 question: |
   Are you the person who will be **giving** power over your own decision making?
+subquestion: |
+  In a Power of Attorney, the "Principal" is the person who names someone else to help handle legal and financial matters.
 fields:
   - I am: person_answering
     datatype: radio
@@ -275,7 +472,8 @@ subquestion: |
   You can name two kinds of decision makers on this website:
 
   1. People who can make decisions for you now. This kind of person is called
-     an attorney in fact. And,
+     an attorney-in-fact. And,
+  
   1. People who can only make decisions for you if the first people
      are no longer able to do so, called successors.
 
@@ -360,14 +558,15 @@ question: |
   Do you want to name any **backup** decision makers?
 subquestion: |
   % if attorneys.number() > 1:
-  The people you name as **backup**, or **successor**
+  The people you name as **backup**, called the **successor** attorney-in-fact,
   will only be able to make decisions if ${ attorneys.familiar() } are not able to.
   % else:
-  The people you name as **backup**, or **successor**
-  will only be able to make decisions if ${ attorneys.familiar() } is not able to.
+  The person you name as **backup**, called the **successor** attorney-in-fact, will only be able to make decisions if ${ attorneys.familiar() } is not able to.
   % endif
 
   Most people name at least one backup decision maker.
+
+  We will ask you later if you want to name more than one person.
 fields:
   - Name backup decision makers?: successor_attorneys.there_are_any
     datatype: yesnoradio
@@ -384,13 +583,6 @@ question: |
   % else:
   Who do you want to name as the first backup decision maker?
   % endif
-subquestion: |
-  The person that you name is called a "successor attorney-in-fact" in Minnesota.
-  
-  They will only be able to make decisions if ${ attorneys.familiar() } can no 
-  longer do so.
-
-  We will ask you later if you want to name more than one person.
 fields:
   - code: |
       successor_attorneys[0].name_fields()
@@ -444,15 +636,19 @@ fields:
   - How long will the power of attorney last?: expiration_choice
     datatype: radio
     choices:
-      - Limited time: limited time
-      - Never expires: unlimited time
+      - Limited time: Limited time
+      - Never expires: Unlimited time
   - "The power of attorney expires on": poa_expiration_date
     datatype: ThreePartsDate
     show if:
       variable: expiration_choice
-      is: "limited time"
+      is: "Limited time"
   - "The power of attorney should continue if I am incapacitated": is_durable_poa
     datatype: yesno
+    help: |
+      This is called Durable Powers of Attorney.
+
+      Durable Powers of Attorney let your Attorney-in-Fact act for you even if you become mentally incompetent and cannot make decisions on your own.
 ---
 id: independent authority
 question: |
@@ -485,7 +681,7 @@ fields:
 ---
 depends on: expiration_choice
 code: |
-  poa_expires = expiration_choice == "limited time"
+  poa_expires = expiration_choice == "Limited time"
 ---
 id: What can the power of attorney decide for you
 question: |
@@ -513,79 +709,6 @@ fields:
     show if: power_real_estate
     help: |
       If you choose "yes" we will ask about the specific properties later.
-  - "Lawsuits and legal claims": power_claims
-    datatype: yesnoradio
-    help: |
-      If you grant this power, ${ attorneys.familiar() } will be able to handle any kind of legal dispute or action on your behalf. This includes:
-      
-		    - asserting and defending against claims before courts, administrative boards, departments, commissioners and tribunals,
-		    - paying judgments or receiving settlement money
-		    - hiring any attorney to represent your interests in a legal dispute
-		    - appearing for you in bankruptcy court
-        
-		  This also includes to power to perform "any other acts in connection with any claim by or against you or with litigation to which you are or may become or be designated a party."
-  - "Bond, share and commodity transactions": power_bond_share_commodity
-    datatype: yesnoradio
-    help: |
-      If you grant this power, ${ attorneys.familiar() } will be able to conduct all kinds of transactions regarding bonds, shares, and commodities.
-      
-		  If you own bonds, shares, or commodities, ${ attorneys.familiar() } could sell them. If you do not, ${ attorneys.familiar() } could buy some.
-      
-		  This includes the power to buy, sell, transfer, and manage bonds, shares and commodities, as well as "any other acts with respect to any interest in any bond, share, other instrument of similar character, commodity, or instrument with respect to a commodity."
-  - "Buy or change insurance": power_insurance
-    datatype: yesnoradio
-    help: |
-    	If you grant this power, ${ attorneys.familiar() } will be able to handle all kinds of insurance transactions in your name. This includes the power to:
-      
-		    - purchase new insurance contracts including health, life, accident, and disability insurance,
-	    	- end or change any existing insurance contract,
-		    - make insurance claims,
-		    - manage the money from any insurance settlement,
-		    - and much more.
-        
-		  In addition, these powers include "any other acts in connection with procuring, supervising, managing, modifying, enforcing, and terminating contracts of insurance..."
-  - "Beneficiary transactions": power_beneficiaries
-    datatype: yesnoradio
-    help: |
-    	If you grant this power, ${ attorneys.familiar() } will be able to "represent and act for you in all ways and in all matters" affecting any:
-      
-		    - trust or probate estate,
-		    - guardianship or conservatorship,
-		    - escrow,
-		    - custodianship,
-		    - qualified or non-qualified benefit plan,
-		    - individual retirement asset,
-		    - or any other fund which you are (or claim to be) entitled to receive payment from as a beneficiary or participant.
-        
-		  This includes the power to accept, reject, pledge or demand payment from any such fund. In addition, Test L Test will be able to do "any other act" with regard to any of the types of funds listed above.
-  - "Records, reports and statements": power_records
-    datatype: yesnoradio
-    help: |
-      If you grant this power, ${ attorneys.familiar() } will be able to keep track of money and assets you get and pay out. It also includes the power to:
-      
-		    - keep track of any debts you owe or are owed
-		    - prepare and file all of your tax returns
-		    - file petitions to the Tax Court on your behalf (for example, to ask for time extensions or to claim you are being taxed unfairly)
-		    - handle all paperwork needed for protecting your interests in any property
-        
-		  In addition, this also includes the power to "do any other acts in connection with the preparation, execution, filing, storage, or other use of any records, reports, or statements of or concerning your affairs."
-  - "Military benefits": power_military_benefits
-    datatype: yesnoradio
-    help: |
-    	If you grant this power, ${ attorneys.familiar() } will have the same powers you have in making decisions about any benefits from military service you may receive. This includes the power to:
-      
-		    - sign any vouchers for benefits or reimbursements you may get as a result of military service
-		    - take possession and control of any property you have in storage
-	    	- file claims for military benefits on your behalf
-	    	- handle any disputes regarding your claims for military benefits
-        
-	  	This also includes the power to perform "any other acts which the attorney-in-fact deems desirable or necessary, to assure the principal, and to the dependents of the principal, the maximum possible benefit from the military service performed prior to or after the execution of the power of attorney..."
-  - "Fiduciary transactions": power_fiduciary
-    datatype: yesnoradio
-    help: |
-    	If you grant this power, ${ attorneys.familiar() } will have the same powers you have (or may have in the future) as a fiduciary for any fund.
-      
-		  This includes the power to "represent and act for you in all ways and in all matters affecting any fund with respect to which you are a fiduciary."
   - "Buy and sell my personal property": power_tangible_property
     datatype: yesnoradio
     help: |
@@ -596,88 +719,196 @@ fields:
       
       If you grant this power, ${ attorneys.familiar() } will be able to enter into
       all kinds of transactions regarding your tangible personal property.
-      This includes the power to buy, sell, lease, change and manage property, as well 
-      as "any other acts with respect to any tangible personal property or interest 
+      
+      This includes the power to buy, sell, lease, change and manage property, as well as "any other acts with respect to any tangible personal property or interest 
       in any tangible personal property."
-  - "Help run my business": power_business
+  - "Bond, share and commodity transactions": power_bond_share_commodity
     datatype: yesnoradio
     help: |
-    	If you grant this power, ${ attorneys.familiar() } will have the same power as you have over your business. If you are a partner in a business, this includes any power (or duty) you have under the partnership agreement.	If you own a business, this includes power over:
+      If you grant this power, ${ attorneys.familiar() } will be able to conduct all kinds of transactions regarding bonds, shares, and commodities.
       
-		    - the name and form of organization of your business,
-		    - business contracts (including employment contracts),
-	    	- business operating sites and locations,
-	    	- manufacturing, selling, merchandising, financing, accounting, advertising, and insurance,
-		    - partnership agreements, including the power to enter into new partnership agreements,
-		    - and much more.
-        
-	  	This also includes "any other act which the attorney-in-fact deems desirable or necessary for the furtherance or protection of the interests of the principal you in any business."
-  - "Gift transactions": power_gifts
-    datatype: yesnoradio
-    help: |
-    	If you grant this power, ${ attorneys.familiar() } will be able to give any type of gift in your name. This includes the power to:
+      If you own bonds, shares, or commodities, ${ attorneys.familiar() } could sell them. If you do not, ${ attorneys.familiar() } could buy some.
       
-		    - give gifts of up to $10,000 to your spouse, descendants and other family members, for tax purposes and other purposes
-	    	- give gifts to charities and businesses you have given to in the past
-		    - perform "any other acts which the attorney-in-fact deems desirable or necessary to complete any gift on behalf of the principal."
+      This includes the power to buy, sell, transfer, and manage bonds, shares and commodities, as well as "any other acts with respect to any interest in any bond, share, other instrument of similar character, commodity, or instrument with respect to a commodity."
   - "Control over my bank accounts": power_banking
     datatype: yesnoradio
     help: |
-    	If you grant this power, ${ attorneys.familiar() } will have the same power to handle your bank accounts as you do. This includes the power to:
+      If you grant this power, ${ attorneys.familiar() } will have the same power to handle your bank accounts as you do. This includes the power to:
       
-	    	- open, close or change accounts in your name,
-		    - withdraw and deposit money,
-		    - apply for credit and borrow money at interest,
-		    - get and handle statements,
-	    	- access any safe deposit boxes you may have,
-	    	- and much more.
+        - open, close or change accounts in your name,
+        - withdraw and deposit money,
+        - apply for credit and borrow money at interest,
+        - get and handle statements,
+        - access any safe deposit boxes you may have,
+        - and much more.
         
-		   ${ attorneys.familiar() } will be able to do "any other acts in connection with any banking transaction which does or might in any way affect the financial or other interests of the principal you."
+      ${ attorneys.familiar() } will be able to do "any other acts in connection with any banking transaction which does or might in any way affect the financial or other interests of the principal."   
+  - "Help run my business": power_business
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will have the same power as you have over your business. If you are a partner in a business, this includes any power (or duty) you have under the partnership agreement.	If you own a business, this includes power over:
+        
+        - the name and form of organization of your business,
+        - business contracts (including employment contracts),
+        - business operating sites and locations,
+        - manufacturing, selling, merchandising, financing, accounting, advertising, and insurance,
+        - partnership agreements, including the power to enter into new partnership agreements,
+      - and much more.
+        
+      This also includes "any other act which the attorney-in-fact deems desirable or necessary for the furtherance or protection of the interests of the principal in any business."       
+  - "Buy or change insurance": power_insurance
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will be able to handle all kinds of insurance transactions in your name. This includes the power to:
+      
+        - purchase new insurance contracts including health, life, accident, and disability insurance,
+        - end or change any existing insurance contract,
+        - make insurance claims,
+        - manage the money from any insurance settlement,
+        - and much more.
+        
+      In addition, these powers include "any other acts in connection with procuring, supervising, managing, modifying, enforcing, and terminating contracts of insurance..."
+  - "Beneficiary transactions": power_beneficiaries
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will be able to "represent and act for you in all ways and in all matters" affecting any:
+      
+        - trust or probate estate,
+        - guardianship or conservatorship,
+        - escrow,
+        - custodianship,
+        - qualified or non-qualified benefit plan,
+        - individual retirement asset,
+        - or any other fund which you are (or claim to be) entitled to receive payment from as a beneficiary or participant.
+      
+      This includes the power to accept, reject, pledge or demand payment from any such fund. In addition, Test L Test will be able to do "any other act" with regard to any of the types of funds listed above.
+  - "Gift transactions": power_gifts
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will be able to give any type of gift in your name. This includes the power to:
+      
+        - give gifts of up to $10,000 to your spouse, descendants and other family members, for tax purposes and other purposes
+        - give gifts to charities and businesses you have given to in the past
+        - perform "any other acts which the attorney-in-fact deems desirable or necessary to complete any gift on behalf of the principal."
+  - "Fiduciary transactions": power_fiduciary
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will have the same powers you have (or may have in the future) as a fiduciary for any fund.
+      
+      This includes the power to "represent and act for you in all ways and in all matters affecting any fund with respect to which you are a fiduciary."  
+  - "Lawsuits and legal claims": power_claims
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will be able to handle any kind of legal dispute or action on your behalf. This includes:
+      
+        - asserting and defending against claims before courts, administrative boards, departments, commissioners and tribunals,
+        - paying judgments or receiving settlement money
+        - hiring any attorney to represent your interests in a legal dispute
+        - appearing for you in bankruptcy court
+        
+      This also includes to power to perform "any other acts in connection with any claim by or against you or with litigation to which you are or may become or be designated a party."
   - "Provide for my family": power_family
     datatype: yesnoradio
     help: |
-    	If you grant this power, ${ attorneys.familiar() } will be able to make decisions about the care of your family in the same way you would.
+      If you grant this power, ${ attorneys.familiar() } will be able to make decisions about the care of your family in the same way you would.
       
-		  This power includes taking any action needed for medical care and to maintain your family's standard of living, as well as:
+      This power includes taking any action needed for medical care and to maintain your family's standard of living, as well as:
       
-		    - the power to use any of your assets to perform this power, including taking money from your bank accounts or selling any of your assets
-		    - the power to take and use any money (or other assets) that you would get, like salary, wages, stock dividends or other payments
+        - the power to use any of your assets to perform this power, including taking money from your bank accounts or selling any of your assets
+        - the power to take and use any money (or other assets) that you would get, like salary, wages, stock dividends or other payments
         
-		  This also includes the power to "do any other acts for the welfare of the spouse, children, or other persons customarily supported by the principal or for the preservation and maintenance of the other personal relationships of the principal to parents, relatives, friends, and organizations as are appropriate."
-  - label: |
-      <h2 class="h4">Do you want to grant all powers?</h2>
-
-      You selected all of the powers named above.
-      Do you mean to give ${ attorneys.familiar() } power over **all**
-      of your decision making?
-    field: power_all_above
+      This also includes the power to "do any other acts for the welfare of the spouse, children, or other persons customarily supported by the principal or for the preservation and maintenance of the other personal relationships of the principal to parents, relatives, friends, and organizations as are appropriate."   
+  - "Military benefits": power_military_benefits
     datatype: yesnoradio
-    label above field: True
-    js show if: |
-      (val("power_real_estate") && 
-        val("power_real_estate") &&
-        val("power_real_estate") &&
-        val("power_bond_share_commodity") &&
-        val("power_insurance") &&
-        val("power_beneficiaries") &&
-        val("power_records") &&
-        val("power_military_benefits") &&
-        val("power_fiduciary") &&
-        val("power_tangible_property") &&
-        val("power_business") &&
-        val("power_gifts") &&
-        val("power_banking") &&
-        val("power_family")
-      )
-  
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will have the same powers you have in making decisions about any benefits from military service you may receive. This includes the power to:
+      
+        - sign any vouchers for benefits or reimbursements you may get as a result of military service
+        - take possession and control of any property you have in storage
+        - file claims for military benefits on your behalf
+        - handle any disputes regarding your claims for military benefits
+        
+      This also includes the power to perform "any other acts which the attorney-in-fact deems desirable or necessary, to assure the principal, and to the dependents of the principal, the maximum possible benefit from the military service performed prior to or after the execution of the power of attorney..."      
+  - "Records, reports and statements": power_records
+    datatype: yesnoradio
+    help: |
+      If you grant this power, ${ attorneys.familiar() } will be able to keep track of money and assets you get and pay out. It also includes the power to:
+        
+        - keep track of any debts you owe or are owed
+        - prepare and file all of your tax returns
+        - file petitions to the Tax Court on your behalf (for example, to ask for time extensions or to claim you are being taxed unfairly)
+        - handle all paperwork needed for protecting your interests in any property
+      
+      In addition, this also includes the power to "do any other acts in connection with the preparation, execution, filing, storage, or other use of any records, reports, or statements of or concerning your affairs."
+
 continue button field: What_can_the_power_of_attorney_decide_for_you
+---
+code: |
+  selected_powers = []
+
+  if power_real_estate:
+      selected_powers.append("Real estate")
+  if power_tangible_property:
+      selected_powers.append("Personal property")
+  if power_bond_share_commodity:
+      selected_powers.append("Bond, share and commodity transactions")
+  if power_banking:
+      selected_powers.append("Banking")
+  if power_business:
+      selected_powers.append("Business operations")
+  if power_insurance:
+      selected_powers.append("Insurance")
+  if power_beneficiaries:
+      selected_powers.append("Beneficiary transactions")
+  if power_gifts:
+      selected_powers.append("Gift transactions")
+  if power_fiduciary:
+      selected_powers.append("Fiduciary transactions")
+  if power_claims:
+      selected_powers.append("Lawsuits and legal claims")
+  if power_family:
+      selected_powers.append("Family support")
+  if power_military_benefits:
+      selected_powers.append("Military benefits")
+  if power_records:
+      selected_powers.append("Records, reports and statements")
+
+  selected_powers_text = comma_and_list(selected_powers)
+---
+code: |
+  if len(selected_powers) == 0:
+      power_all_above_label = "Continue without granting any powers?"
+  else:
+      power_all_above_label = f"Do you mean to give {attorneys.familiar()} power over all of your decision making?"
+---
+id: power all above
+question: |
+  <h2 class="h4">Do you want to grant the following powers?</h2>
+
+  % if len(selected_powers) == 0:
+  You did not select any powers for your attorney-in-fact.
+
+  Is this correct?
+  % else:
+  You selected the following powers: ${ selected_powers_text }.
+
+  Is this correct?
+  % endif
+
+field: power_all_above # do I need this?
+buttons:
+  - Confirm and continue
 ---
 id: What limits will the power of attorney have
 question: |
   What limits will the power of attorney have?
 fields:
-  - The attorneys-in-fact cannot make gifts to themselves: authority_gift_to_self
+  - The attorneys-in-fact **CANNOT** make gifts to themselves, or transfer your assets to themselves or to someone they have a legal obligation to support: authority_gift_to_self
     datatype: noyes
+    help: |
+        Some Power of Attorney forms give Attorneys-in-Fact the power to transfer the Principal's property into their own names.
+
+        You can limit this by refusing to grant this power.
   - label: |
       % if person_answering == "drafter":
       The attorney-in-fact must tell ${ users.familiar() } regularly how they spend their money and make decisions for them
@@ -686,28 +917,47 @@ fields:
       % endif
     field: attorney_must_provide_accounting
     datatype: yesno
-  - note: |
-      <h2 class="h4 mt-2">${ attorneys }'s reports</h2>
-    show if: attorney_must_provide_accounting
+    help: |
+      Some Power of Attorney forms say the Attorney-in-Fact has to give regular "accountings" of any actions taken in the principal's name.
+      
+      This means that any time the Attorney-in-Fact acts for you, they have to give you an account that says what was done.
+      
+      This can be a good way to protect against abuse.
   - label: |
       Who should ${ attorneys.familiar() } send the reports about their decisions to?
+    field: accounting_selection
+    datatype: radio
+    choices:
+      - Myself only: myself_only
+      - Someone else: someone_else
+    show if: attorney_must_provide_accounting
+  - label: | 
+      List the name of the person(s) who should receive reportings.
       % if is_durable_poa:
+      [BR]
       [BR]
       **Note**: because the power of attorney will last even if ${ users.familiar() } is
       unable to make their own decisions any longer, **you should name at least one
       other person** to get the reports.
       % endif
-    field: accounting_goes_to
+    field: accounting_goes_to # should I make this a name field instead of an open text box?
     datatype: area
     rows: 2
+    help: |
+      You can ask that accountings go solely to yourself or they could also go to someone like a trusted friend, family member, lawyer, or accountant.
+      
+      If someone else gets the accountings, it can be a good way to protect against abuse.
     label above field: True
-    show if: attorney_must_provide_accounting
+    show if: 
+      variable: accounting_selection
+      is: someone_else
   - How often should ${ attorneys.familiar() } make their reports?: accounting_update_schedule
     help: |
       For example, every 6 months.
     datatype: area
+    # should this be a picklist? LHI has 'monthly, quarterly, annual' as options.
     rows: 2
-    show if: attorney_must_provide_accounting    
+    show if: attorney_must_provide_accounting  
     label above field: True
 continue button field: What_limits_will_the_power_of_attorney_have
 ---
@@ -726,7 +976,8 @@ subject: |
 
   >  "LOT 10 BLOCK 240 AND N. 30 FT OF LOT
   >  11 BLOCK 240 COUNTY ..."
-
+if: |
+  power_real_estate and real_estate_limited
 fields:
   - County: real_estate_items[i].county
     choices:
@@ -821,7 +1072,7 @@ fields:
     datatype: area
     rows: 2
     help: |
-      Like: _LOT 10 BLOCK 240 AND N. 30 FT OF LOT 11 BLOCK 240 COUNTY ..._
+      Like: _LOT 10 BLOCK 240 AND N. 30 FT OF LOT 11 BLOCK 240 COUNTY ...
 ---
 table: real_estate_items.table
 rows: real_estate_items
@@ -833,53 +1084,75 @@ columns:
 edit:
   - county
 ---
-code: |
-  signature_fields = []
----
-need:
-  - real_estate_items.table
-id: mn powers of attorney review screen
-continue button field: review_mn_powers_of_attorney
+id: feedback
+mandatory: True
 question: |
-  Review your answers
+  Give us your feedback
+subquestion: |
+  ${ only_once_review_widget() }
+---
+code: |
+  if attorneys.number_gathered() > 1:
+    aif_acts_independently 
+  else:
+    undefine("aif_acts_independently")
+  recompute_aif = True
+---
+id: mn powers of attorney review screen
+question: Review your answers
+continue button field: review_mn_powers_of_attorney
+need: real_estate_items.table
+tabular: table table-striped
 review:
   - Edit: users.revisit
     button: |
-      **Name of person giving power**
-
+      **Name of person giving power (the Principal):**
       % for item in users:
-        * ${ item }
+         ${ item }
       % endfor
-  - Edit: attorneys.revisit
+  - Edit:
+    - attorneys.revisit
+    - invalidate:
+        - aif_acts_independently
+    - recompute:
+        - recompute_aif
     button: |
-      **Decision makers**
-
-      % for item in attorneys:
-        * ${ item }
-      % endfor
+      **Decision makers (Attorneys-in-Fact):**
+      ${ comma_and_list(attorneys) }
+      
+      % if attorneys.number() > 1:
+      **${ attorneys.familiar() } can act independently at the same time**: 
+      ${ word(yesno(aif_acts_independently)) }
+      % endif
   - Edit: successor_attorneys.revisit
     button: |
-      **Backup decision makers**
-
-      % for item in successor_attorneys:
-        * ${ item }
-      % endfor
+      **Backup decision makers (Successor Attorneys-in-Fact):**
+      ${ comma_and_list(successor_attorneys) }
+  - Edit: expiration_choice
+    button: |
+      **The power of attorney will last for**:
+      ${ word(expiration_choice) }
+      % if expiration_choice == 'Limited time': 
+       
+        **The power of attorney expires on**:
+      ${ poa_expiration_date }
+      % endif
+  - Edit: is_durable_poa
+    button: |
+      **The power of attorney should continue if I am incapacitated (Durable Power of Attorney)**:
+      ${ word(yesno(is_durable_poa)) }
   - Edit: 
-      - power_real_estate
-      - recompute:
-        - real_estate_items.there_are_any
+    - What_can_the_power_of_attorney_decide_for_you # should this be selected_powers instead?
+    - follow up: 
+        - real_estate_items[0].county
     button: |
       **${ attorneys.familiar() } can make decisions about:**
-
-      * Real estate: ${ yesno( power_real_estate ) }
-      % if real_estate_limited:
-            * Decision making over real estate is limited to these properties:
       
-      ${ real_estate_items.table }
-
-      ${ real_estate_items.add_action() }
-
-      % endif
+      * Real estate: ${ yesno( power_real_estate ) } 
+          % if power_real_estate and real_estate_limited: 
+          * Decision making over real estate is limited to these properties:
+          ${ real_estate_items.table }
+          % endif
       * Lawsuits and legal claims: ${ yesno( power_claims ) }
       * Bond, share and commodity transactions: ${ yesno( power_bond_share_commodity ) }
       * Buy or change insurance: ${ yesno( power_insurance ) }
@@ -892,36 +1165,34 @@ review:
       * Gift transactions: ${ yesno( power_gifts ) }
       * Control over my bank accounts: ${ yesno( power_banking ) }
       * Provide for my family: ${ yesno( power_family ) }
-      * All of the above: ${ yesno(showifdef("power_all_above")) }
   - Edit: authority_gift_to_self
     button: |
       **Make gifts to themselves**:
       ${ word(yesno(authority_gift_to_self)) }
   - Edit: attorney_must_provide_accounting
     button: |
-      **Attorney must provide accounting**:
+      **${ attorneys.familiar() } must provide accounting**:
       ${ word(yesno(attorney_must_provide_accounting)) }
-  - Edit: poa_expiration_date
-    button: |
-      **The power of attorney expires on**:
-      ${ poa_expiration_date }
-  - Edit: power_all_above
-    button: |
-      **Grant all powers above**:
-      ${ word(yesno(power_all_above)) }
-  - Edit: poa_expires
-    button: |
-      **The power of attorney is for a limited time**:
-      ${ word(yesno(poa_expires)) }
-  - Edit: is_durable_poa
-    button: |
-      **The power of attorney should continue if I am incapacitated**:
-      ${ word(yesno(is_durable_poa)) }
-  - Edit: aif_acts_independently
-    button: |
-      **Each attorney in fact can act at the same time**:
-      ${ word(yesno(aif_acts_independently)) }
+      % if attorney_must_provide_accounting:
+      
+        **Accountings should be provided to:**
+      % if accounting_selection == 'myself_only':
+      Myself only
+      % elif accounting_selection == 'someone_else':
+      Someone else
+      % endif  
+      % endif
+      % if accounting_selection == 'someone_else':
+      
+        **Accountings should go to:** ${ word(accounting_goes_to) }
+      % endif
+      % if attorney_must_provide_accounting:
+      
+        **Accountings should occur:**
+      ${ accounting_update_schedule }
+      % endif
 ---
+id: edit decision makers
 continue button field: attorneys.revisit
 question: |
   Edit decision makers
@@ -942,6 +1213,7 @@ edit:
   - address.address
 confirm: True
 ---
+id: edit backup decision makers
 continue button field: successor_attorneys.revisit
 question: |
   Edit backup decision makers
@@ -963,6 +1235,7 @@ edit:
 confirm: True
 
 ---
+id: edit users
 continue button field: users.revisit
 question: |
   Edit users
@@ -993,7 +1266,7 @@ subquestion: |
   
   View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
 
-  ${ action_button_html(url_action('review_mn_powers_of_attorney'), label='Edit answers', color='info') }
+  ${ action_button_html(url_action('review_mn_powers_of_attorney'), label=':edit: Edit answers', color='warning') }
   
   
   ${ al_user_bundle.download_list_html() }
@@ -1005,23 +1278,23 @@ progress: 100
 ---
 # ALDocument objects specify the metadata for each template
 objects:
-  #- mn_powers_of_attorney_Post_interview_instructions: ALDocument.using(title="Instructions", filename="mn_powers_of_attorney_next_steps.docx", enabled=True, has_addendum=False)
+  - mn_powers_of_attorney_Post_interview_instructions: ALDocument.using(title="Next Steps", filename="mn_powers_of_attorney_next_steps.docx", enabled=True, has_addendum=False)
   - mn_powers_of_attorney_attachment: ALDocument.using(title="Powers of Attorney", filename="mn_powers_of_attorney", enabled=True, has_addendum=False, )
 ---
 # Bundles group the ALDocuments into separate downloads, such as for court and for the user
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[mn_powers_of_attorney_attachment], filename="mn_powers_of_attorney", title="All forms to download for your records", enabled=True)
-  - al_recipient_bundle: ALDocumentBundle.using(elements=[mn_powers_of_attorney_attachment],  filename="mn_powers_of_attorney", title="All forms to file", enabled=True)
+  - al_user_bundle: ALDocumentBundle.using(elements=[mn_powers_of_attorney_attachment, mn_powers_of_attorney_Post_interview_instructions], filename="mn_powers_of_attorney", title="Download all documents", enabled=True)
+#  - al_recipient_bundle: ALDocumentBundle.using(elements=[mn_powers_of_attorney_attachment],  filename="mn_powers_of_attorney", title="All forms to file", enabled=True)
 ---
 # Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
 # used for "preview" and "final" keys, and logic in the template checks the value of 
 # `i` to show or hide the user's signature
-#attachment:
-#  name: Post-interview-Instructions
-#  filename: mn_powers_of_attorney_next_steps
-#  docx template file: mn_powers_of_attorney_next_steps.docx
-#  variable name: mn_powers_of_attorney_Post_interview_instructions[i]
-#  skip undefined: True
+attachment:
+  name: Post-interview-Instructions
+  filename: mn_powers_of_attorney_next_steps
+  docx template file: mn_powers_of_attorney_next_steps.docx
+  variable name: mn_powers_of_attorney_Post_interview_instructions[i]
+  skip undefined: True
 ---
 attachment:
   name: mn powers of attorney
@@ -1029,6 +1302,7 @@ attachment:
   variable name: mn_powers_of_attorney_attachment[i]
   skip undefined: True
   docx template file: mn_powers_of_attorney.docx
+
 
 
 
